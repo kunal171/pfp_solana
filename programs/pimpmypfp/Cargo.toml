@@ -1,0 +1,25 @@
+[package]
+name = "pimpmypfp"
+version = "0.1.0"
+description = "Created with Anchor"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "pimpmypfp"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = "0.29.0"
+anchor-spl = "0.29.0"
+spl-token = { version = "3.2",  features = ["no-entrypoint"] }
+spl-associated-token-account = {version = "1.0.3", features = ["no-entrypoint"]}
+thiserror = "1.0"
+ahash = "=0.8.6"
+arrayref = "0.3.6"
