@@ -6,6 +6,8 @@ use arrayref::array_ref;
 
 declare_id!("8NKtq4YKTd5oeJxBX9rcZAwabBong4Cb9G1muHc86SGt");
 
+const PREFIX: &str = "pfp";
+
 #[program]
 pub mod pfp {
 
@@ -287,10 +289,10 @@ pub fn make_ata<'a>(
 
 #[derive(Accounts)]
 pub struct Initialize<'info> {
-    #[account(init, payer = initializer, space = 8 + 32 + 32 + 32 + 32)]
-    pub base_account: Account<'info, BaseAccount>,
     #[account(mut)]
     pub initializer: Signer<'info>,
+    #[account(init, payer = initializer, space = 8 + 32 + 32 + 32 + 32, seeds=[PREFIX.as_bytes(), initializer.key().as_ref()], bump)]
+    pub base_account: Account<'info, BaseAccount>,
     /// CHECK: This is not dangerous because we don't read or write from this account
     #[account(mut)]
     pub fee_receiver: AccountInfo<'info>,
@@ -300,10 +302,6 @@ pub struct Initialize<'info> {
     #[account(mut)] 
     /// CHECK: This is not dangerous because we don't read or write from this account
     pub ata: UncheckedAccount<'info>,
-    /// CHECK: This is not dangerous because we don't read or write from this account
-    pub pimping_fee: AccountInfo<'info>, 
-    #[account(mut)]
-    pub token_account: Account<'info, TokenAccount>,
     #[account(executable)]
     pub token_program: Program<'info, Token>,
     pub ata_program: Program<'info, AssociatedToken>,
@@ -319,6 +317,7 @@ pub struct BaseAccount {
     pub pimping_fee: u64,
     pub fee_receiver: Pubkey, 
     pub fee_token: Pubkey,
+    pub bump: u8,
 }
 
 #[derive(Accounts)]    
@@ -367,8 +366,6 @@ pub struct SetFeeReceiver<'info> {
     pub fee_token: AccountInfo<'info>,
     /// CHECK: This is not dangerous because we don't read or write from this account
     pub new_fee_reciever_token_account: UncheckedAccount<'info>,
-    #[account(mut)]
-    pub token_account: Account<'info, TokenAccount>,
     #[account(executable)]
     pub token_program: Program<'info, Token>,
     pub ata_program: Program<'info, AssociatedToken>,
