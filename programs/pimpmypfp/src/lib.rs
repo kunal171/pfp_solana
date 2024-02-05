@@ -1,6 +1,6 @@
 
 use anchor_lang::{prelude::*, solana_program::program::invoke_signed};
-use anchor_spl::{token::{TokenAccount, Token}, associated_token::AssociatedToken};
+use anchor_spl::{token::{Mint, Token, TokenAccount}, associated_token::AssociatedToken};
 use arrayref::array_ref;
 
 
@@ -297,17 +297,13 @@ pub struct Initialize<'info> {
     #[account(mut)]
     pub fee_receiver: AccountInfo<'info>,
     #[account(mut)]
-    /// CHECK: This is not dangerous because we don't read or write from this account
-    pub fee_token: AccountInfo<'info>,
+    pub fee_token: Account<'info, Mint>,
     #[account(mut)] 
     /// CHECK: This is not dangerous because we don't read or write from this account
     pub ata: UncheckedAccount<'info>,
-    #[account(executable)]
     pub token_program: Program<'info, Token>,
     pub ata_program: Program<'info, AssociatedToken>,
-    /// CHECK: This is not dangerous because we don't read or write from this account
-    pub system_program: AccountInfo<'info>,
-    /// CHECK: This is not dangerous because we don't read or write from this account
+    pub system_program: Program<'info, System>,
     pub rent: Sysvar<'info, Rent>,
 }
 
@@ -336,7 +332,6 @@ pub struct SetFeeToken<'info> {
     pub new_fee_token_account: UncheckedAccount<'info>,
     #[account(mut)]
     pub token_account: Account<'info, TokenAccount>,
-    #[account(executable)]
     pub token_program: Program<'info, Token>,
     pub ata_program: Program<'info, AssociatedToken>,
     /// CHECK: This is not dangerous because we don't read or write from this account
@@ -361,9 +356,8 @@ pub struct SetFeeReceiver<'info> {
     /// CHECK: This is not dangerous because we don't read or write from this account
     pub new_receiver: AccountInfo<'info>,
     pub payer: Signer<'info>,
-    /// CHECK: This is not dangerous because we don't read or write from this account
     #[account(mut)]
-    pub fee_token: AccountInfo<'info>,
+    pub fee_token: Account<'info, Mint>,
     /// CHECK: This is not dangerous because we don't read or write from this account
     pub new_fee_reciever_token_account: UncheckedAccount<'info>,
     #[account(executable)]

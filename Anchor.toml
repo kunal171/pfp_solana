@@ -4,7 +4,7 @@
 seeds = false
 skip-lint = false
 
-[programs.localnet]
+[programs.devnet]
 pimpmypfp = "8NKtq4YKTd5oeJxBX9rcZAwabBong4Cb9G1muHc86SGt"
 
 [registry]
